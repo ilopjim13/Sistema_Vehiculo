@@ -4,10 +4,18 @@ class Automovil(marca:String,
                 combustibleActual:Float,
                 kilometrosActuales:Int,
                 val esElectrico :Boolean,
-                val conducionBritanica:Boolean
+                var conducionBritanica:Boolean
 ) :Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
     override fun calcularAutonomia(): Float {
+
+    }
+
+    fun cambiarCondicionBritania(nuevaCondicion: Boolean) {
+        this.conducionBritanica = nuevaCondicion
+    }
+
+    fun realizaDerrape():Float {
 
     }
 }
