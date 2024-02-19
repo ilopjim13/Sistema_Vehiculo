@@ -8,7 +8,7 @@ class Automovil(marca:String,
 ) :Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
     override fun calcularAutonomia(): Float {
-
+        return 0.0f
     }
 
     fun cambiarCondicionBritania(nuevaCondicion: Boolean) {
@@ -16,6 +16,6 @@ class Automovil(marca:String,
     }
 
     fun realizaDerrape():Float {
-
+        return 0.0f
     }
 }

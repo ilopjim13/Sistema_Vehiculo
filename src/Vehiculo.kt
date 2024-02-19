@@ -1,4 +1,4 @@
-open class Vehiculo(val marca:String, val modelo: String, val capacidadCombustible: Float, val combustibleActual: Float, val kilometrosActuales:Int) {
+open class Vehiculo(val marca:String, val modelo: String, val capacidadCombustible: Float, var combustibleActual: Float, val kilometrosActuales:Int) {
 
     fun obtenerInformacion(): String {
         return "El vehiculo puede recorrer ${combustibleActual * 10} kilometros con $combustibleActual litros de combustible."
@@ -11,19 +11,34 @@ open class Vehiculo(val marca:String, val modelo: String, val capacidadCombustib
     open fun calcularAutonomia() = capacidadCombustible * 10
 
     fun realizarViaje(distancia:Int) :Int {
-        var distanciaRecorrida = 0
-        var distanciaRestante = 0
-        if (combustibleActual * 10 - distancia < 0) {
-            distanciaRecorrida = combustibleActual.toInt() * 10
-            distanciaRestante =
+        val distanciaRecorrida = combustibleActual.toInt() * 10
+        val distanciaRestante:Int
+        if (combustibleActual * 10 < distancia) {
+            distanciaRestante = distanciaRecorrida - distancia
+            this.combustibleActual = 0.0f
         }
-        else distanciaRecorrida = combustibleActual.toInt() * 10 - distancia
+        else {
+            distanciaRestante = 0
+            this.combustibleActual -= distancia * 10
+        }
 
-        println("Ha viajado $viajado km")
         return distanciaRestante
     }
 
-    fun repostar(cantidad:Float) :Float {
+    fun repostar(cantidad:Float = 0.0f) :Float {
+        val cantRepostar :Float
+        return if (cantidad <= 0.0) {
+            cantRepostar = this.combustibleActual - capacidadCombustible
+            this.combustibleActual = capacidadCombustible
+            cantRepostar
+        } else if (cantidad + combustibleActual >= capacidadCombustible) {
+            cantRepostar = this.combustibleActual - capacidadCombustible
+            this.combustibleActual = capacidadCombustible
+            cantRepostar
+        } else {
+            this.combustibleActual += cantidad
+            cantidad
+        }
 
     }
 }
