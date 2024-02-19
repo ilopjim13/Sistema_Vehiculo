@@ -1,27 +1,37 @@
-open class Vehiculo(val marca:String, val modelo: String, val capacidadCombustible: Float, var combustibleActual: Float, val kilometrosActuales:Int) {
+open class Vehiculo(val marca:String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales:Int) {
+
+    val capacidadCombustible = capacidadCombustible.redondear()
+    var combustibleActual = combustibleActual.redondear()
+    open val KM_L = 10
+
+    init {
+        require(this.capacidadCombustible > 0) {"La capacidad no puede ser menor a 0"}
+        require(this.combustibleActual > 0) {"El combustible no puede ser menor a 0"}
+    }
 
     fun obtenerInformacion(): String {
-        return "El vehiculo puede recorrer ${combustibleActual * 10} kilometros con $combustibleActual litros de combustible."
+        return "El vehiculo puede recorrer ${calcularAutonomia()} kilometros con $combustibleActual litros de combustible."
     }
 
     override fun toString():String {
-        return "$marca $modelo con una capacidad de $capacidadCombustible"
+        return "$marca $modelo con una capacidad de $capacidadCombustible, kilometros actuales: $kilometrosActuales"
     }
 
-    open fun calcularAutonomia() = capacidadCombustible * 10
+    open fun calcularAutonomia() = (combustibleActual * KM_L).toInt()
 
-    fun realizarViaje(distancia:Int) :Int {
-        val distanciaRecorrida = combustibleActual.toInt() * 10
+    open fun realizarViaje(distancia:Int) :Int {
+        val distanciaRecorrida = this.calcularAutonomia()
         val distanciaRestante:Int
-        if (combustibleActual * 10 < distancia) {
-            distanciaRestante = distanciaRecorrida - distancia
+        if (distanciaRecorrida < distancia) {
+            distanciaRestante = distancia - distanciaRecorrida
             this.combustibleActual = 0.0f
+            this.kilometrosActuales += distanciaRecorrida
         }
         else {
             distanciaRestante = 0
-            this.combustibleActual -= distancia * 10
+            this.combustibleActual -= distancia / this.KM_L
+            this.kilometrosActuales += distancia
         }
-
         return distanciaRestante
     }
 
