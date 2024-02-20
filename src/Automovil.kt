@@ -2,11 +2,9 @@ class Automovil(marca:String,
                 modelo:String,
                 capacidadCombustible:Float,
                 combustibleActual:Float,
-                kilometrosActuales:Int,
+                kilometrosActuales:Float,
                 var esElectrico :Boolean
 ) :Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
-
-    override val KM_L = 10
 
     companion object {
         var conducionBritanica:Boolean = true
@@ -15,27 +13,11 @@ class Automovil(marca:String,
         }
     }
 
-    override fun calcularAutonomia(): Int {
+    override fun calcularAutonomia(): Float {
         return if(!esElectrico) super.calcularAutonomia()
-        else (this.combustibleActual * 15).toInt()
-    }
-
-    override fun realizarViaje(distancia: Int): Int {
-        if (!esElectrico) return super.realizarViaje(distancia)
         else {
-            val distanciaRecorrida = this.calcularAutonomia()
-            val distanciaRestante:Int
-            if (distanciaRecorrida < distancia) {
-                distanciaRestante = distancia - distanciaRecorrida
-                this.combustibleActual = 0.0f
-                this.kilometrosActuales += distanciaRecorrida
-            }
-            else {
-                distanciaRestante = 0
-                this.combustibleActual -= distancia / 15
-                this.kilometrosActuales += distancia
-            }
-            return distanciaRestante
+            KM_L = 15.0f
+            (this.combustibleActual * KM_L).redondear()
         }
     }
 
@@ -43,7 +25,7 @@ class Automovil(marca:String,
         println("El automovil ha realizado un derrape.")
         if (esElectrico) this.combustibleActual -= 0.33f
         else this.combustibleActual -= 0.5f
-        return this.combustibleActual
+        return this.combustibleActual.redondear()
     }
 
     override fun toString(): String {
