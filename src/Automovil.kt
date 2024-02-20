@@ -20,6 +20,25 @@ class Automovil(marca:String,
         else (this.combustibleActual * 15).toInt()
     }
 
+    override fun realizarViaje(distancia: Int): Int {
+        if (!esElectrico) return super.realizarViaje(distancia)
+        else {
+            val distanciaRecorrida = this.calcularAutonomia()
+            val distanciaRestante:Int
+            if (distanciaRecorrida < distancia) {
+                distanciaRestante = distancia - distanciaRecorrida
+                this.combustibleActual = 0.0f
+                this.kilometrosActuales += distanciaRecorrida
+            }
+            else {
+                distanciaRestante = 0
+                this.combustibleActual -= distancia / 15
+                this.kilometrosActuales += distancia
+            }
+            return distanciaRestante
+        }
+    }
+
     fun realizaDerrape():Float {
         println("El automovil ha realizado un derrape.")
         if (esElectrico) this.combustibleActual -= 0.33f

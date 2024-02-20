@@ -10,9 +10,6 @@ class Motocicleta(marca:String,
 
     override fun calcularAutonomia() = (combustibleActual * KM_L).toInt()
 
-    override fun realizarViaje(distancia: Int): Int {
-        return super.realizarViaje(distancia)
-    }
 
     fun realizoCaballito() : Float {
         println("La motocicleta ha realizado un caballito.")
