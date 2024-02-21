@@ -1,5 +1,14 @@
 import kotlin.math.absoluteValue
 
+/**
+ * Clase derivada Motocicleta
+ * @param marca :String marca del vehiculo
+ * @param modelo :String modelo del vehiculo
+ * @param capacidadCombustible :Float cantidad máxima del combustible que tiene el vehiculo
+ * @param combustibleActual :Float cantidad de combustible actual que tiene el vehiculo
+ * @param kilometrosActuales :Float kilometros actuales que ha recorrido el vehiculo
+ * @property cilindrada :Int indica el numero de cilendrada de la motocicleta
+ */
 class Motocicleta(marca:String,
                   modelo:String,
                   capacidadCombustible:Float,
@@ -14,6 +23,10 @@ class Motocicleta(marca:String,
         KM_L = 20.0f
     }
 
+    companion object {
+        val CILINDRADAMAX = 1000f
+    }
+
     /**
      * Calcula la autonomia de la motocicleta con el combustible actual teniendo en cuenta la cilindrada, siendo 1000 20Km/L
      * y restando su valor entre 1000 al tope de los kilometros por litro.
@@ -22,7 +35,7 @@ class Motocicleta(marca:String,
     override fun calcularAutonomia() : Float {
         return if(cilindrada == 1000) super.calcularAutonomia()
         else {
-            KM_L = (((1000.0f - cilindrada) / 1000.0f) - 20.0f).absoluteValue
+            KM_L = (((CILINDRADAMAX - cilindrada) / CILINDRADAMAX) - 20.0f).absoluteValue
             (combustibleActual * KM_L).redondear()
         }
     }

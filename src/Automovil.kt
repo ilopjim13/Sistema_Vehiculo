@@ -1,3 +1,12 @@
+/**
+ * Clase derivada Automovil
+ * @param marca :String marca del vehiculo
+ * @param modelo :String modelo del vehiculo
+ * @param capacidadCombustible :Float cantidad máxima del combustible que tiene el vehiculo
+ * @param combustibleActual :Float cantidad de combustible actual que tiene el vehiculo
+ * @param kilometrosActuales :Float kilometros actuales que ha recorrido el vehiculo
+ * @property esHibrido :Boolean indica si el coche es hibrido o no
+ */
 class Automovil(marca:String,
                 modelo:String,
                 capacidadCombustible:Float,
