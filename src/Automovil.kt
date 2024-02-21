@@ -3,7 +3,7 @@ class Automovil(marca:String,
                 capacidadCombustible:Float,
                 combustibleActual:Float,
                 kilometrosActuales:Float,
-                var esElectrico :Boolean
+                var esHibrido :Boolean
 ) :Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
     companion object {
@@ -13,24 +13,30 @@ class Automovil(marca:String,
         }
     }
 
-    override fun calcularAutonomia(): Float {
-        return if(!esElectrico) super.calcularAutonomia()
-        else {
-            KM_L = 15.0f
-            (this.combustibleActual * KM_L).redondear()
-        }
+    init {
+        if (esHibrido) KM_L = 15.0f
     }
 
+
+    /**
+     * Realiza un derrape consumiendo combustible y retorna la cantidad de combustible actual que le queda
+     * @return Float el combustible actual despues del derrape
+     */
     fun realizaDerrape():Float {
         println("El automovil ha realizado un derrape.")
-        if (esElectrico) this.combustibleActual -= 0.33f
-        else this.combustibleActual -= 0.5f
+        if (esHibrido) this.combustibleActual -= 6.25f / KM_L
+        else this.combustibleActual -= 7.5f / KM_L
+        this.combustibleActual = this.combustibleActual.redondear()
         return this.combustibleActual.redondear()
     }
 
+    /**
+     * Muestra la información de los automóviles
+     * @return String retorna la información correspondiente
+     */
     override fun toString(): String {
         return "${super.toString()}, ${
-            if (esElectrico) "es electrico"
+            if (esHibrido) "es electrico"
             else "no es electrico"
         }, y la condución ${
             if (conducionBritanica) "es Británica"
