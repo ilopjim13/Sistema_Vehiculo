@@ -9,22 +9,23 @@ import kotlin.math.absoluteValue
  * @param kilometrosActuales :Float kilometros actuales que ha recorrido el vehiculo
  * @property cilindrada :Int indica el numero de cilendrada de la motocicleta
  */
-class Motocicleta(marca:String,
+class Motocicleta(nombre:String,
+                  marca:String,
                   modelo:String,
                   capacidadCombustible:Float,
                   combustibleActual:Float,
                   kilometrosActuales:Float,
                   val cilindrada :Int
-) :Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+) :Vehiculo(nombre,marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
 
     init {
-        require(this.cilindrada in 125..1000) {"La cilindrada no puede ser menor a 125 ni mayor a 1000"}
-        KM_L = 20.0f
+        require(this.cilindrada in 125..CILINDRADAMAX) {"La cilindrada no puede ser menor a 125 ni mayor a 1000"}
     }
 
     companion object {
-        val CILINDRADAMAX = 1000f
+        const val CILINDRADAMAX = 1000
+        const val KM_L_M = 20F
     }
 
     /**
@@ -33,12 +34,33 @@ class Motocicleta(marca:String,
      * @return Float retorna el calculo de la autonomia
      */
     override fun calcularAutonomia() : Float {
-        return if(cilindrada == 1000) super.calcularAutonomia()
-        else {
-            KM_L = (((CILINDRADAMAX - cilindrada) / CILINDRADAMAX) - 20.0f).absoluteValue
-            (combustibleActual * KM_L).redondear()
-        }
+        return if(cilindrada == CILINDRADAMAX) super.calcularAutonomia()
+        else (((CILINDRADAMAX - cilindrada) / CILINDRADAMAX) - KM_L_M * combustibleActual).absoluteValue.redondear()
+
     }
+
+
+    /**
+     * Realiza un viaje dependiendo de la distancia introducida y retornará la distancia restante
+     * @return Float retorna la distancia restante para llegar a la distancia introducida
+     */
+    override fun realizarViaje(distancia:Float) :Float {
+        val distanciaRecorrida = this.calcularAutonomia()
+        val distanciaRestante:Float
+        if (distanciaRecorrida < distancia) {
+            distanciaRestante = distancia - distanciaRecorrida
+            this.combustibleActual = 0.0f
+            this.kilometrosActuales += distanciaRecorrida.redondear()
+
+        }
+        else {
+            distanciaRestante = 0.0f
+            this.combustibleActual -= (distancia / KM_L_M).redondear()
+            this.kilometrosActuales = this.kilometrosActuales.redondear() + distancia.redondear()
+        }
+        return distanciaRestante.redondear()
+    }
+
 
     /**
      * Realiza un caballito consumiendo combustible y retorna la cantidad de combustible actual que le queda
@@ -46,7 +68,7 @@ class Motocicleta(marca:String,
      */
     fun realizoCaballito() : Float {
         println("La motocicleta ha realizado un caballito.")
-        combustibleActual -= (6.5f / KM_L).redondear()
+        combustibleActual -= (6.5f / KM_L_M).redondear()
         this.combustibleActual = this.combustibleActual.redondear()
         return combustibleActual.redondear()
     }

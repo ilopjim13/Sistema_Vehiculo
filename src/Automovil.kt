@@ -7,23 +7,44 @@
  * @param kilometrosActuales :Float kilometros actuales que ha recorrido el vehiculo
  * @property esHibrido :Boolean indica si el coche es hibrido o no
  */
-class Automovil(marca:String,
+class Automovil(nombre:String,
+                marca:String,
                 modelo:String,
                 capacidadCombustible:Float,
                 combustibleActual:Float,
                 kilometrosActuales:Float,
                 var esHibrido :Boolean
-) :Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+) :Vehiculo(nombre,marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
     companion object {
+        const val KM_L_HIBRIDO = 15
         var conducionBritanica:Boolean = true
         fun cambiarCondicionBritania(nuevaCondicion: Boolean) {
             conducionBritanica = nuevaCondicion
         }
     }
 
-    init {
-        if (esHibrido) KM_L = 15.0f
+    /**
+     * Realiza un viaje dependiendo de la distancia introducida y retornará la distancia restante
+     * @return Float retorna la distancia restante para llegar a la distancia introducida
+     */
+    override fun realizarViaje(distancia:Float) :Float {
+        if (!esHibrido) return super.realizarViaje(distancia)
+        else {
+            val distanciaRecorrida = this.calcularAutonomia()
+            val distanciaRestante: Float
+            if (distanciaRecorrida < distancia) {
+                distanciaRestante = distancia - distanciaRecorrida
+                this.combustibleActual = 0.0f
+                this.kilometrosActuales += distanciaRecorrida.redondear()
+
+            } else {
+                distanciaRestante = 0.0f
+                this.combustibleActual -= (distancia / KM_L_HIBRIDO).redondear()
+                this.kilometrosActuales = this.kilometrosActuales.redondear() + distancia.redondear()
+            }
+            return distanciaRestante.redondear()
+        }
     }
 
 
@@ -33,8 +54,8 @@ class Automovil(marca:String,
      */
     fun realizaDerrape():Float {
         println("El automovil ha realizado un derrape.")
-        if (esHibrido) this.combustibleActual -= 6.25f / KM_L
-        else this.combustibleActual -= 7.5f / KM_L
+        if (esHibrido) this.combustibleActual -= (6.25f / KM_L_HIBRIDO).redondear()
+        else this.combustibleActual -= (7.5f / KM_L).redondear()
         this.combustibleActual = this.combustibleActual.redondear()
         return this.combustibleActual.redondear()
     }
