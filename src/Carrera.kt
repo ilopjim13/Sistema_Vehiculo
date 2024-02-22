@@ -12,34 +12,57 @@ class Carrera(val nombreCarrera: String,
     fun iniciarCarrera() {
         this.estadoCarrera = true
 
+        while (estadoCarrera) {
+
+            val vehiculo = participantes.random()
+
+            avanzarVehiculo(vehiculo)
+
+            actualizarPosiciones()
+
+            determinarGanador()
+        }
 
     }
 
     fun avanzarVehiculo(vehiculo: Vehiculo) {
-        val avanzar = (1000..20000).random().toFloat()/100
+        var avanzar = (1000..20000).random().toFloat()/100
+        var avanzado: Float
 
-        var avanzado = vehiculo.realizarViaje(avanzar)
+        val filigranas = (avanzar / 20).toInt()
 
-        while ( avanzado != 0.0f) {
-            vehiculo.repostar()
-            avanzado = vehiculo.realizarViaje(avanzado)
+        registrarAccion(vehiculo.nombre, "Inicia viaje: A recorrer $avanzar (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
+
+
+        repeat (filigranas) {
+            if (vehiculo.combustibleActual <= 0) {
+                repostarVehiculos(vehiculo, 0f)
+                registrarAccion(vehiculo.nombre, "Repostaje tramo: Recorrido $")
+            }
+             avanzar = vehiculo.realizarViaje(avanzar)
+            registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido")
+
+            realizarFiligrana(vehiculo)
         }
+
+        registrarAccion(vehiculo.nombre, "Finaliza viaje: Total Recorrido $avanzar (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
+
     }
 
     fun repostarVehiculos(vehiculo: Vehiculo, cantidad: Float) {
         val cant = vehiculo.repostar(cantidad)
-        registrarAccion(vehiculo.nombre, "${vehiculo.nombre} ha repostado una cantidad de $cant litros")
     }
 
     fun realizarFiligrana(vehiculo: Vehiculo) {
         when (vehiculo) {
             is Automovil -> {
                 val com = vehiculo.realizaDerrape()
-                registrarAccion(vehiculo.nombre, "${vehiculo.nombre} ha realizado un derrape. Combustible actual: $com litros")
+                registrarAccion(vehiculo.nombre, "Derrape: Combustible restante ${vehiculo.combustibleActual}")
             }
             is Motocicleta -> {
                 val com = vehiculo.realizoCaballito()
-                registrarAccion(vehiculo.nombre, "${vehiculo.nombre} ha realizado un caballito. Combustible actual: $com litros")
+                registrarAccion(vehiculo.nombre, "Caballito: Combustible restante ${vehiculo.combustibleActual}")
+
             }
         }
     }
@@ -98,16 +121,12 @@ class Carrera(val nombreCarrera: String,
      * @property historialAcciones Una lista de cadenas que describen las acciones realizadas por el vehículo a lo largo de la carrera, proporcionando un registro detallado de su rendimiento y estrategias.
      */
     data class ResultadoCarrera(
-        val vehiculo: Vehiculo?,
+        val vehiculo: Vehiculo,
         val posicion: Int,
         val kilometraje: Float,
         val paradasRepostaje: Int,
         val historialAcciones: List<String>?
-    ) {
-        override fun toString(): String {
-            return "${vehiculo?.nombre} ha terminado en la posicion ${this.posicion}, con un kilometraje de ${this.kilometraje} km y un total de ${this.paradasRepostaje} paradas."
-        }
-    }
+    )
 
 
 }

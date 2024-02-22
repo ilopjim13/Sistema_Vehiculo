@@ -53,7 +53,6 @@ class Automovil(nombre:String,
      * @return Float el combustible actual despues del derrape
      */
     fun realizaDerrape():Float {
-        println("El automovil ha realizado un derrape.")
         if (esHibrido) this.combustibleActual -= (6.25f / KM_L_HIBRIDO).redondear()
         else this.combustibleActual -= (7.5f / KM_L).redondear()
         this.combustibleActual = this.combustibleActual.redondear()

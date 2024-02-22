@@ -19,28 +19,36 @@ fun main() {
 
     val carrera = Carrera("La gran carrera", 1000, lista)
 
-    do {
-        carrera.iniciarCarrera()
-        carrera.avanzarVehiculo(dinamo)
-        carrera.repostarVehiculos(dinamo, 6f)
-        carrera.repostarVehiculos(aurora, 65f)
-        carrera.avanzarVehiculo(eclipse)
-        carrera.avanzarVehiculo(fenix)
-        carrera.avanzarVehiculo(cefiro)
-        carrera.avanzarVehiculo(aurora)
-        carrera.avanzarVehiculo(boreal)
+    carrera.iniciarCarrera()
 
-        carrera.actualizarPosiciones()
-        carrera.determinarGanador()
-    } while (carrera.estadoCarrera)
+    println("*** ${carrera.nombreCarrera.uppercase()} ***\n")
 
+    println("¡Comienza la carrera!")
+    println(".....................")
+    println("¡Comienza finalizada!\n")
 
+    val ganador = carrera.posiciones.filter{it.value == 1}
 
-    println("Hay ganador\n")
+    println("¡¡¡ENHORABUENA ${ganador.keys.toString().replace("[", "").replace("]", "").uppercase()}!!!\n")
+
+    println("* Clasificación:\n")
 
     val resultados = carrera.obtenerResultados()
+
+    resultados.forEach {
+        val (nom, pos, km, par, his ) = it
+        println("$pos -> ${nom.nombre.replaceFirstChar { it.uppercase() }} ($km)")
+    }
+
+    println("")
+
+    resultados.forEach { println(it) }
+
+    println("")
+
     resultados.forEach { resultado ->
-        println(resultado)
+        val (nom, pos, km, par, his ) = resultado
+        println("$pos -> ${nom.nombre.replaceFirstChar { it.uppercase() }}")
         resultado.historialAcciones?.forEach { println(it)}
     }
 

@@ -67,7 +67,6 @@ class Motocicleta(nombre:String,
      * @return Float el combustible actual despues del caballito
      */
     fun realizoCaballito() : Float {
-        println("La motocicleta ha realizado un caballito.")
         combustibleActual -= (6.5f / KM_L_M).redondear()
         this.combustibleActual = this.combustibleActual.redondear()
         return combustibleActual.redondear()
