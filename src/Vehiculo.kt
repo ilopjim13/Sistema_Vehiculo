@@ -15,6 +15,8 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
             field = value.redondear()
         }
 
+    var paradas = 0
+
     init {
         require(this.capacidadCombustible > 0) {"La capacidad no puede ser menor a 0"}
         require(this.combustibleActual > 0) {"El combustible no puede ser menor a 0"}
@@ -78,13 +80,14 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
      * @return Float retorna la cantidad repostada.
      */
     fun repostar(cantidad:Float = 0.0f) :Float {
+        this.paradas++
         val cantRepostar :Float
         return if (cantidad <= 0.0) {
-            cantRepostar = this.combustibleActual - capacidadCombustible
+            cantRepostar = capacidadCombustible - this.combustibleActual
             this.combustibleActual = capacidadCombustible
             cantRepostar.redondear()
         } else if (cantidad + combustibleActual >= capacidadCombustible) {
-            cantRepostar = this.combustibleActual - capacidadCombustible
+            cantRepostar = capacidadCombustible - this.combustibleActual
             this.combustibleActual = capacidadCombustible
             cantRepostar.redondear()
         } else {
