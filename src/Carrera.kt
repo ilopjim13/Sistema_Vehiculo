@@ -16,6 +16,8 @@ class Carrera(val nombreCarrera: String,
 
     private var estadoCarrera:Boolean = false
 
+    private val premios: List<Premios> = listOf(Premios.VACIO1,Premios.VACIO2, Premios.VACIO3, Premios.VACIO4, Premios.SUMAR10, Premios.TELETRANSPORTE, Premios.RETRASARTODOS, Premios.RESTAR5, Premios.CASILLADESALIDA, Premios.CASILLADESALIDA)
+
     init {
         require(this.distanciaTotal >= 1000) {"La distancia total no puede ser menor a 1000 km"}
     }
@@ -30,6 +32,8 @@ class Carrera(val nombreCarrera: String,
         while (estadoCarrera) {
 
             val vehiculo = participantes.random()
+
+            vehiculo.premio = premios.random()
 
             avanzarVehiculo(vehiculo)
 

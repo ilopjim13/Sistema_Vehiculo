@@ -19,6 +19,8 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
             field = value.redondear()
         }
 
+    var premio:Premios = Premios.VACIO1
+
     var paradas = 0
 
     init {
