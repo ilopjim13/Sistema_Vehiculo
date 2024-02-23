@@ -6,6 +6,18 @@ fun Float.redondear():Float {
     return (this * 100).toInt().toFloat() / 100
 }
 
+/**
+ * Funcion extendida de String que permite eliminar los espacios sobrantes al principio y fina de la cadena de caracteres
+ * y capitaliza todas las palabras seguida de otra
+ * @return String retorna el string sin espacios a la izquierda y derecha y las palabras capitalizadas
+ */
+fun String.espacios(): String {
+    val espacios = this.split(" ").toMutableList()
+    val palabras:MutableList<String> = mutableListOf()
+    espacios.forEach{if (it.isNotBlank()) palabras.add(it)}
+    return palabras.joinToString(" ") { i -> i.replaceFirstChar { it.uppercase() } }
+}
+
 fun main() {
 
     // se crean los vehiculos
@@ -28,7 +40,7 @@ fun main() {
 
     println("¡Comienza la carrera!")
     println(".....................")
-    println("¡Comienza finalizada!\n")
+    println("¡Carrera finalizada!\n")
 
     val ganador = carrera.posiciones.filter{it.value == 1} //filtra por el ganador que esta en el puesto 1
 
@@ -40,7 +52,7 @@ fun main() {
 
     resultados.forEach {resultado ->
         val (nom, pos, km ) = resultado
-        println("$pos -> ${nom.nombre.replaceFirstChar { it.uppercase() }} ($km)") // imprime la calificacion
+        println("$pos -> ${nom.nombre.espacios()} ($km)") // imprime la calificacion
     }
 
     println("")
@@ -52,7 +64,7 @@ fun main() {
     // informacion detallada
     resultados.forEach { resultado ->
         val (nom, pos ) = resultado
-        println("$pos -> ${nom.nombre.replaceFirstChar { it.uppercase() }}") // se imprime el nombre con su posicion
+        println("$pos -> ${nom.nombre.espacios()}") // se imprime el nombre con su posicion
         resultado.historialAcciones?.forEach { println(it)} // se imprimen los registros del historial de registros de cada participante
     }
 
