@@ -35,8 +35,8 @@ fun main() {
 
     val resultados = carrera.obtenerResultados()
 
-    resultados.forEach {
-        val (nom, pos, km, par, his ) = it
+    resultados.forEach {resultado ->
+        val (nom, pos, km, par, his ) = resultado
         println("$pos -> ${nom.nombre.replaceFirstChar { it.uppercase() }} ($km)")
     }
 

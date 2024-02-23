@@ -6,11 +6,15 @@
  * @param combustibleActual :Float cantidad de combustible actual que tiene el vehiculo
  * @property kilometrosActuales :Float kilometros actuales que ha recorrido el vehiculo
  */
-open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales:Float) {
+open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales:Float) {
 
     val nombre:String = nombre.trim().lowercase()
     val capacidadCombustible = capacidadCombustible.redondear()
     var combustibleActual = combustibleActual.redondear()
+        set(value) {
+            field = value.redondear()
+        }
+    var kilometrosActuales = kilometrosActuales.redondear()
         set(value) {
             field = value.redondear()
         }
@@ -68,7 +72,7 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
         else {
             distanciaRestante = 0.0f
             this.combustibleActual -= (distancia / KM_L).redondear()
-            this.kilometrosActuales = this.kilometrosActuales.redondear() + distancia.redondear()
+            this.kilometrosActuales +=  distancia.redondear()
         }
         return distanciaRestante.redondear()
     }

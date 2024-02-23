@@ -9,6 +9,10 @@ class Carrera(val nombreCarrera: String,
 
     var estadoCarrera:Boolean = false
 
+    init {
+        require(this.distanciaTotal >= 1000) {"La distancia total no puede ser menor a 1000 km"}
+    }
+
     fun iniciarCarrera() {
         this.estadoCarrera = true
 
@@ -26,42 +30,62 @@ class Carrera(val nombreCarrera: String,
     }
 
     fun avanzarVehiculo(vehiculo: Vehiculo) {
-        var avanzar = (1000..20000).random().toFloat()/100
-        var avanzado: Float
-
-        val filigranas = (avanzar / 20).toInt()
+        val avanzar = (1000..20000).random().toFloat()/100
+        var avanzado = avanzar.redondear()
 
         registrarAccion(vehiculo.nombre, "Inicia viaje: A recorrer $avanzar (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
 
+        while (avanzado > 0f) {
 
-        repeat (filigranas) {
-            if (vehiculo.combustibleActual <= 0) {
-                repostarVehiculos(vehiculo, 0f)
-                registrarAccion(vehiculo.nombre, "Repostaje tramo: Recorrido $")
+            val random = (0..2).random()
+            comprobarCombustible(vehiculo)
+            if (vehiculo.kilometrosActuales < distanciaTotal)
+                if (avanzado >= 20) {
+                    avanzado -= 20f
+                    avanzado += vehiculo.realizarViaje(20f).redondear()
+                    registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido 20.0 kms")
+                    comprobarCombustible(vehiculo)
+                    when(random) {
+                        1 -> realizarFiligrana(vehiculo)
+                        2 ->  {
+                            realizarFiligrana(vehiculo)
+                            realizarFiligrana(vehiculo)
+                        }
+                    }
+                } else {
+                    vehiculo.realizarViaje(avanzado.redondear())
+                    registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido ${avanzado.redondear()} kms")
+                    avanzado = 0f
+                }
+            else {
+                vehiculo.kilometrosActuales = distanciaTotal.toFloat()
+                avanzado = 0f
             }
-             avanzar = vehiculo.realizarViaje(avanzar)
-            registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido")
-
-            realizarFiligrana(vehiculo)
         }
 
         registrarAccion(vehiculo.nombre, "Finaliza viaje: Total Recorrido $avanzar (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
 
     }
 
+    fun comprobarCombustible(vehiculo: Vehiculo) {
+        if (vehiculo.calcularAutonomia() - 20 <= 0) repostarVehiculos(vehiculo, 0f)
+
+    }
+
     fun repostarVehiculos(vehiculo: Vehiculo, cantidad: Float) {
-        val cant = vehiculo.repostar(cantidad)
+        vehiculo.repostar(cantidad)
+        registrarAccion(vehiculo.nombre, "Repostaje tramo: ${vehiculo.combustibleActual} L")
     }
 
     fun realizarFiligrana(vehiculo: Vehiculo) {
         when (vehiculo) {
             is Automovil -> {
                 val com = vehiculo.realizaDerrape()
-                registrarAccion(vehiculo.nombre, "Derrape: Combustible restante ${vehiculo.combustibleActual}")
+                registrarAccion(vehiculo.nombre, "Derrape: Combustible restante ${vehiculo.combustibleActual} L")
             }
             is Motocicleta -> {
                 val com = vehiculo.realizoCaballito()
-                registrarAccion(vehiculo.nombre, "Caballito: Combustible restante ${vehiculo.combustibleActual}")
+                registrarAccion(vehiculo.nombre, "Caballito: Combustible restante ${vehiculo.combustibleActual} L")
 
             }
         }
