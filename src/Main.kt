@@ -6,6 +6,13 @@ fun Float.redondear():Float {
     return (this * 100).toInt().toFloat() / 100
 }
 
+fun tiempoEspera() {
+    listOf(".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".").forEach {
+        print(it)
+        Thread.sleep((0.2 * 1000).toLong())
+    }
+}
+
 fun main() {
 
     // se crean los vehiculos
@@ -26,14 +33,16 @@ fun main() {
 
     println("*** ${carrera.nombreCarrera.uppercase()} ***\n")
 
+    Thread.sleep((0.4 * 1000).toLong())
     println("¡Comienza la carrera!")
-    println(".....................")
-    println("¡Comienza finalizada!\n")
+    tiempoEspera()
+    println("\n¡Carrera finalizada!\n")
+    Thread.sleep((0.4 * 1000).toLong())
 
     val ganador = carrera.posiciones.filter{it.value == 1} //filtra por el ganador que esta en el puesto 1
 
     println("¡¡¡ENHORABUENA ${ganador.keys.toString().replace("[", "").replace("]", "").uppercase()}!!!\n") // imprime el nombre del ganador
-
+    Thread.sleep((0.4 * 1000).toLong())
     println("* Clasificación:\n")
 
     val resultados = carrera.obtenerResultados() // se obtienen los resultados de la carrera
@@ -43,11 +52,14 @@ fun main() {
         println("$pos -> ${nom.nombre.replaceFirstChar { it.uppercase() }} ($km)") // imprime la calificacion
     }
 
+    Thread.sleep((0.5 * 1000).toLong())
     println("")
 
     resultados.forEach { println(it) } // se imprimen los resultados
 
-    println("")
+    Thread.sleep((0.4 * 1000).toLong())
+    println("\nHistorial detallado:\n")
+    Thread.sleep((0.4 * 1000).toLong())
 
     // informacion detallada
     resultados.forEach { resultado ->
