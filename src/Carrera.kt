@@ -35,6 +35,8 @@ class Carrera(val nombreCarrera: String,
 
             vehiculo.premio = premios.random()
 
+            ejecutarPremio(vehiculo.premio, vehiculo)
+
             avanzarVehiculo(vehiculo)
 
             actualizarPosiciones()
@@ -93,8 +95,42 @@ class Carrera(val nombreCarrera: String,
      * Comprueba el combustible del vehiculo para ver si necesita repostar o puede seguir avanzando sin haerlo
      * @param vehiculo :Vehiculo vehiculo que va a comprobar su combustible
      */
-    private fun comprobarCombustible(vehiculo: Vehiculo) { if (vehiculo.calcularAutonomia() - 20 <= 0) repostarVehiculos(vehiculo, 0f) }
+    private fun comprobarCombustible(vehiculo: Vehiculo) {
+        if (vehiculo.calcularAutonomia() - 20 <= 0 || vehiculo.combustibleActual <= 0) repostarVehiculos(vehiculo, 0f)
+    }
 
+
+    private fun ejecutarPremio(premio: Premios, vehiculo: Vehiculo) {
+        when (premio) {
+            Premios.VEHICULOALINICIO -> vehiculoAlInicio()
+            Premios.RETRASARTODOS -> retrasarTodos()
+            Premios.TELETRANSPORTE -> {
+                if (vehiculo.kilometrosActuales + 100 < distanciaTotal) vehiculo.kilometrosActuales += 100
+                else vehiculo.kilometrosActuales = distanciaTotal.toFloat()
+                registrarAccion(vehiculo.nombre, "Se teletransporta 100km")
+            }
+            Premios.CASILLADESALIDA -> {
+                vehiculo.kilometrosActuales = 0f
+                registrarAccion(vehiculo.nombre, "Vuelve al inicio")
+            }
+            Premios.SUMAR10 -> registrarAccion(vehiculo.nombre, "Suma 10km/L en el siguiente avance")
+            Premios.RESTAR5 -> registrarAccion(vehiculo.nombre, "Resta 5km/L en el siguiente avance")
+            else -> vehiculo.kilometrosActuales = vehiculo.kilometrosActuales
+        }
+    }
+
+    private fun vehiculoAlInicio() {
+        val vehiculo = participantes.random()
+        vehiculo.kilometrosActuales = 0f
+        registrarAccion(vehiculo.nombre, "Vuelve al inicio")
+    }
+
+    private fun retrasarTodos(){
+        participantes.map {
+            if (it.kilometrosActuales - 100 > 0) it.kilometrosActuales -= 100
+            else it.kilometrosActuales = 0f
+        }
+    }
 
     /**
      * Reposta el vehículo seleccionado, incrementando su combustibleActual y registrando la acción en historialAcciones.

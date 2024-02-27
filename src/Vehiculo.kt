@@ -32,6 +32,8 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
 
     companion object {
         const val KM_L = 10.0f
+        const val KM_L_MAS10 = 20.0f
+        const val KM_L_MENOS5 = 5.0f
         private val nombres = mutableSetOf<String>()
         private fun agregarNombres(nombre:String) = !nombres.add(nombre)
     }
@@ -57,7 +59,14 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
      * Calcula la autonomia del vehiculo con el combustible actual y la retorna
      * @return Float retorna el calculo de la autonomia
      */
-    open fun calcularAutonomia() = (combustibleActual * KM_L).redondear()
+    open fun calcularAutonomia():Float {
+        return when (premio) {
+            Premios.SUMAR10 -> (combustibleActual * KM_L_MAS10).redondear()
+            Premios.RESTAR5 -> (combustibleActual * KM_L_MENOS5).redondear()
+            else -> (combustibleActual * KM_L).redondear()
+        }
+
+    }
 
     /**
      * Realiza un viaje dependiendo de la distancia introducida y retornará la distancia restante
@@ -66,15 +75,28 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
     open fun realizarViaje(distancia:Float) :Float {
         val distanciaRecorrida = this.calcularAutonomia()
         val distanciaRestante:Float
+
         if (distanciaRecorrida < distancia) {
             distanciaRestante = distancia - distanciaRecorrida
             this.combustibleActual = 0.0f
             this.kilometrosActuales += distanciaRecorrida.redondear()
         }
         else {
-            distanciaRestante = 0.0f
-            this.combustibleActual -= (distancia / KM_L).redondear()
-            this.kilometrosActuales +=  distancia.redondear()
+            when(premio) {
+                Premios.SUMAR10 -> {
+                    distanciaRestante = 0.0f
+                    this.combustibleActual -= (distancia / KM_L_MAS10).redondear()
+                    this.kilometrosActuales +=  distancia.redondear()}
+                Premios.RESTAR5 -> {
+                    distanciaRestante = 0.0f
+                    this.combustibleActual -= (distancia / KM_L_MENOS5).redondear()
+                    this.kilometrosActuales +=  distancia.redondear() }
+                else -> {
+                    distanciaRestante = 0.0f
+                    this.combustibleActual -= (distancia / KM_L).redondear()
+                    this.kilometrosActuales +=  distancia.redondear()
+                }
+            }
         }
         return distanciaRestante.redondear()
     }

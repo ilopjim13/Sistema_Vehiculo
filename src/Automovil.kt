@@ -18,11 +18,25 @@ class Automovil(nombre:String,
 
     companion object {
         const val KM_L_HIBRIDO = 15
+        const val KM_L_HIBRIDO_MAS10 = 25
+        const val KM_L_HIBRIDO_MENOS5 = 10
         var conducionBritanica:Boolean = true
         fun cambiarCondicionBritania(nuevaCondicion: Boolean) {
             conducionBritanica = nuevaCondicion
         }
     }
+
+    override fun calcularAutonomia(): Float {
+        return if (!esHibrido) super.calcularAutonomia()
+        else {
+            when (premio) {
+                Premios.SUMAR10 -> (combustibleActual * KM_L_HIBRIDO_MAS10).redondear()
+                Premios.RESTAR5 -> (combustibleActual * KM_L_HIBRIDO_MENOS5).redondear()
+                else -> (combustibleActual * KM_L).redondear()
+            }
+        }
+    }
+
 
     /**
      * Realiza un viaje dependiendo de la distancia introducida y retornará la distancia restante
@@ -39,9 +53,21 @@ class Automovil(nombre:String,
                 this.kilometrosActuales += distanciaRecorrida.redondear()
 
             } else {
-                distanciaRestante = 0.0f
-                this.combustibleActual -= (distancia / KM_L_HIBRIDO).redondear()
-                this.kilometrosActuales = this.kilometrosActuales.redondear() + distancia.redondear()
+                when(premio) {
+                    Premios.SUMAR10 -> {
+                        distanciaRestante = 0.0f
+                        this.combustibleActual -= (distancia / KM_L_HIBRIDO_MAS10).redondear()
+                        this.kilometrosActuales +=  distancia.redondear()}
+                    Premios.RESTAR5 -> {
+                        distanciaRestante = 0.0f
+                        this.combustibleActual -= (distancia / KM_L_HIBRIDO_MENOS5).redondear()
+                        this.kilometrosActuales +=  distancia.redondear() }
+                    else -> {
+                        distanciaRestante = 0.0f
+                        this.combustibleActual -= (distancia / KM_L_HIBRIDO).redondear()
+                        this.kilometrosActuales +=  distancia.redondear()
+                    }
+                }
             }
             return distanciaRestante.redondear()
         }
