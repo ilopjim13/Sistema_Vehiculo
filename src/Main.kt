@@ -12,10 +12,7 @@ fun Float.redondear():Float {
  * @return String retorna el string sin espacios a la izquierda y derecha y las palabras capitalizadas
  */
 fun String.espacios(): String {
-    val espacios = this.split(" ").toMutableList()
-    val palabras:MutableList<String> = mutableListOf()
-    espacios.forEach{if (it.isNotBlank()) palabras.add(it)}
-    return palabras.joinToString(" ") { i -> i.replaceFirstChar { it.uppercase() } }
+    return this.trim().split(" ").joinToString(" ") { i -> i.replaceFirstChar { it.uppercase() } }
 }
 
 fun main() {

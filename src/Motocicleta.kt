@@ -41,12 +41,10 @@ class Motocicleta(nombre:String,
                 if(cilindrada == CILINDRADAMAX) KM_L_M_MAS10 * combustibleActual
                 else (((CILINDRADAMAX - cilindrada) / CILINDRADAMAX) - KM_L_M_MAS10 * combustibleActual).absoluteValue.redondear()
             }
-
             Premios.RESTAR5 -> {
                 if(cilindrada == CILINDRADAMAX) KM_L_M_MENOS5 * combustibleActual
                 else (((CILINDRADAMAX - cilindrada) / CILINDRADAMAX) - KM_L_M_MENOS5 * combustibleActual).absoluteValue.redondear()
             }
-
             else -> {
                 if(cilindrada == CILINDRADAMAX) KM_L_M * combustibleActual
                 else (((CILINDRADAMAX - cilindrada) / CILINDRADAMAX) - KM_L_M * combustibleActual).absoluteValue.redondear()
@@ -69,20 +67,12 @@ class Motocicleta(nombre:String,
 
         }
         else {
+            distanciaRestante = 0.0f
+            this.kilometrosActuales +=  distancia.redondear()
             when(premio) {
-                Premios.SUMAR10 -> {
-                    distanciaRestante = 0.0f
-                    this.combustibleActual -= (distancia / KM_L_M_MAS10).redondear()
-                    this.kilometrosActuales +=  distancia.redondear()}
-                Premios.RESTAR5 -> {
-                    distanciaRestante = 0.0f
-                    this.combustibleActual -= (distancia / KM_L_MENOS5).redondear()
-                    this.kilometrosActuales +=  distancia.redondear() }
-                else -> {
-                    distanciaRestante = 0.0f
-                    this.combustibleActual -= (distancia / KM_L_M_MENOS5).redondear()
-                    this.kilometrosActuales = this.kilometrosActuales.redondear() + distancia.redondear()
-                }
+                Premios.SUMAR10 -> this.combustibleActual -= (distancia / KM_L_M_MAS10).redondear()
+                Premios.RESTAR5 -> this.combustibleActual -= (distancia / KM_L_MENOS5).redondear()
+                else -> this.combustibleActual -= (distancia / KM_L_M_MENOS5).redondear()
             }
         }
         return distanciaRestante.redondear()

@@ -82,20 +82,12 @@ open class Vehiculo(nombre:String, val marca:String, val modelo: String, capacid
             this.kilometrosActuales += distanciaRecorrida.redondear()
         }
         else {
+            distanciaRestante = 0.0f
+            this.kilometrosActuales +=  distancia.redondear()
             when(premio) {
-                Premios.SUMAR10 -> {
-                    distanciaRestante = 0.0f
-                    this.combustibleActual -= (distancia / KM_L_MAS10).redondear()
-                    this.kilometrosActuales +=  distancia.redondear()}
-                Premios.RESTAR5 -> {
-                    distanciaRestante = 0.0f
-                    this.combustibleActual -= (distancia / KM_L_MENOS5).redondear()
-                    this.kilometrosActuales +=  distancia.redondear() }
-                else -> {
-                    distanciaRestante = 0.0f
-                    this.combustibleActual -= (distancia / KM_L).redondear()
-                    this.kilometrosActuales +=  distancia.redondear()
-                }
+                Premios.SUMAR10 -> this.combustibleActual -= (distancia / KM_L_MAS10).redondear()
+                Premios.RESTAR5 -> this.combustibleActual -= (distancia / KM_L_MENOS5).redondear()
+                else -> this.combustibleActual -= (distancia / KM_L).redondear()
             }
         }
         return distanciaRestante.redondear()

@@ -52,43 +52,53 @@ class Carrera(val nombreCarrera: String,
      * @param vehiculo :Vehiculo vehiculo que va a avanzar
      */
     private fun avanzarVehiculo(vehiculo: Vehiculo) {
-        val avanzar = (1000..20000).random().toFloat()/100
-        var avanzado = avanzar.redondear()
-
-        registrarAccion(vehiculo.nombre, "Inicia viaje: A recorrer $avanzar (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
+        var avanzado = (1000..20000).random().toFloat()/100
+        var total = 0f
+        if (vehiculo.kilometrosActuales >= distanciaTotal) avanzado = 0f
+        registrarAccion(vehiculo.nombre, "Inicia viaje: A recorrer $avanzado (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
         while (avanzado > 0f) {
-
-            val random = (0..2).random()
             comprobarCombustible(vehiculo) // comprueba el combustible para ver si puede avanzar con el que tiene
 
-            if (vehiculo.kilometrosActuales < distanciaTotal) // si los kilometros actuales es menor a la distancia total se ejecuta si no el vehiculo habra ganado
+            if (vehiculo.kilometrosActuales + 20 < distanciaTotal) // si los kilometros actuales es menor a la distancia total se ejecuta si no el vehiculo habra ganado
                 if (avanzado >= 20) {
                     avanzado -= 20f
-                    vehiculo.realizarViaje(20f).redondear() // avanza el vehiculo 20 y resta 20 a la distancia avanzada
-                    registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido 20.0 kms")
-                    comprobarCombustible(vehiculo) // vuelve a comprobar si tiene suficiente combustible para realizar las filigranas
-
-                    when(random) { // dependiendo del numero que salga lo hara una vez, dos o ninguna si sale 0
-                        1 -> realizarFiligrana(vehiculo)
-                        2 ->  {
-                            realizarFiligrana(vehiculo)
-                            realizarFiligrana(vehiculo)
-                        }
-                    }
+                    total += 20f
+                    avanzar20(vehiculo)
 
                 } else { // si no es mayor de 20 avanza con la distancia restante
                     vehiculo.realizarViaje(avanzado.redondear())
+                    total += avanzado
                     registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido ${avanzado.redondear()} kms")
                     avanzado = 0f
                 }
+
             else {
-                vehiculo.kilometrosActuales = distanciaTotal.toFloat()
+                val ultimoTramo = distanciaTotal - vehiculo.kilometrosActuales
+                vehiculo.realizarViaje(ultimoTramo.redondear())
+                registrarAccion(vehiculo.nombre, "Avanza tramo final: Recorrido ${ultimoTramo.redondear()} kms")
+                total += ultimoTramo
                 avanzado = 0f
             }
         }
+        registrarAccion(vehiculo.nombre, "Finaliza viaje: Total Recorrido ${total.redondear()} (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
+    }
 
-        registrarAccion(vehiculo.nombre, "Finaliza viaje: Total Recorrido $avanzar (${vehiculo.kilometrosActuales} kms y ${vehiculo.combustibleActual} L actuales)")
-
+    /**
+     * Avanza 20 kilometros y realiza filigranas
+     * @param vehiculo :Vehiculo el vehiculo que va a avanzar 20 kilometros
+     */
+    private fun avanzar20(vehiculo: Vehiculo) {
+        val random = (0..2).random()
+        vehiculo.realizarViaje(20f).redondear() // avanza el vehiculo 20 y resta 20 a la distancia avanzada
+        registrarAccion(vehiculo.nombre, "Avanza tramo: Recorrido 20.0 kms")
+        comprobarCombustible(vehiculo) // vuelve a comprobar si tiene suficiente combustible para realizar las filigranas
+        when (random) { // dependiendo del numero que salga lo hara una vez, dos o ninguna si sale 0
+            1 -> realizarFiligrana(vehiculo)
+            2 -> {
+                realizarFiligrana(vehiculo)
+                realizarFiligrana(vehiculo)
+            }
+        }
     }
 
     /**
@@ -99,36 +109,59 @@ class Carrera(val nombreCarrera: String,
         if (vehiculo.calcularAutonomia() - 20 <= 0 || vehiculo.combustibleActual <= 0) repostarVehiculos(vehiculo, 0f)
     }
 
-
+    /**
+     * Se ejecutan las cajas sorpresas con sus poderes correspondientes
+     * @param premio :Premios premio de la caja sorpresa que indica el poder a ejecutar
+     * @param vehiculo :Vehiculo vehiculo que va a ejecutar el premio
+     */
     private fun ejecutarPremio(premio: Premios, vehiculo: Vehiculo) {
         when (premio) {
             Premios.VEHICULOALINICIO -> vehiculoAlInicio()
             Premios.RETRASARTODOS -> retrasarTodos()
-            Premios.TELETRANSPORTE -> {
-                if (vehiculo.kilometrosActuales + 100 < distanciaTotal) vehiculo.kilometrosActuales += 100
-                else vehiculo.kilometrosActuales = distanciaTotal.toFloat()
-                registrarAccion(vehiculo.nombre, "Se teletransporta 100km")
-            }
-            Premios.CASILLADESALIDA -> {
-                vehiculo.kilometrosActuales = 0f
-                registrarAccion(vehiculo.nombre, "Vuelve al inicio")
-            }
-            Premios.SUMAR10 -> registrarAccion(vehiculo.nombre, "Suma 10km/L en el siguiente avance")
-            Premios.RESTAR5 -> registrarAccion(vehiculo.nombre, "Resta 5km/L en el siguiente avance")
+            Premios.TELETRANSPORTE -> teletransporte(vehiculo)
+            Premios.CASILLADESALIDA -> casillaDeSalida(vehiculo)
+            Premios.SUMAR10 -> registrarAccion(vehiculo.nombre, "SUMAR 10 -- Suma 10km/L en el siguiente avance")
+            Premios.RESTAR5 -> registrarAccion(vehiculo.nombre, "RESTAR 5 -- Resta 5km/L en el siguiente avance")
             else -> vehiculo.kilometrosActuales = vehiculo.kilometrosActuales
         }
     }
 
+    /**
+     * Teletransporta el vehiculo 100km hacia delante
+     * @param vehiculo :Vehiculo vehiculo que va a ser teletransportado
+     */
+    private fun teletransporte(vehiculo: Vehiculo) {
+        if (vehiculo.kilometrosActuales + 100 < distanciaTotal) vehiculo.kilometrosActuales += 100
+        else vehiculo.kilometrosActuales = distanciaTotal.toFloat()
+        registrarAccion(vehiculo.nombre, "TELETRANSPORTE -- Se teletransporta 100km")
+    }
+
+    /**
+     * Hace que el vehiculo regrese al inicio (Km 0)
+     * @param vehiculo :Vehiculo vehiculo que va a volver al inicio
+     */
+    private fun casillaDeSalida(vehiculo: Vehiculo) {
+        vehiculo.kilometrosActuales = 0f
+        registrarAccion(vehiculo.nombre, "CASSILLA DE SALIDA -- Vuelve al inicio")
+    }
+
+    /**
+     * Elige un coche al alar y lo hace volver al inicio (Km 0)
+     */
     private fun vehiculoAlInicio() {
         val vehiculo = participantes.random()
         vehiculo.kilometrosActuales = 0f
-        registrarAccion(vehiculo.nombre, "Vuelve al inicio")
+        registrarAccion(vehiculo.nombre, "VEHICULO AL INICIO -- Vuelve al inicio")
     }
 
+    /**
+     * Hace que todos los coches se retrasen 100km
+     */
     private fun retrasarTodos(){
         participantes.map {
             if (it.kilometrosActuales - 100 > 0) it.kilometrosActuales -= 100
             else it.kilometrosActuales = 0f
+            registrarAccion(it.nombre, "RETRASAR A TODOS -- Todos se retrasan 100Km")
         }
     }
 

@@ -26,13 +26,18 @@ class Automovil(nombre:String,
         }
     }
 
+    /**
+     * Calcula la autonomia del automovil con el combustible actual y la retorna, si es hibrido el Km/L sera de 15,
+     * si no sera como un vehiculo
+     * @return Float retorna el calculo de la autonomia
+     */
     override fun calcularAutonomia(): Float {
         return if (!esHibrido) super.calcularAutonomia()
         else {
             when (premio) {
                 Premios.SUMAR10 -> (combustibleActual * KM_L_HIBRIDO_MAS10).redondear()
                 Premios.RESTAR5 -> (combustibleActual * KM_L_HIBRIDO_MENOS5).redondear()
-                else -> (combustibleActual * KM_L).redondear()
+                else -> (combustibleActual * KM_L_HIBRIDO).redondear()
             }
         }
     }
@@ -53,20 +58,12 @@ class Automovil(nombre:String,
                 this.kilometrosActuales += distanciaRecorrida.redondear()
 
             } else {
+                distanciaRestante = 0.0f
+                this.kilometrosActuales +=  distancia.redondear()
                 when(premio) {
-                    Premios.SUMAR10 -> {
-                        distanciaRestante = 0.0f
-                        this.combustibleActual -= (distancia / KM_L_HIBRIDO_MAS10).redondear()
-                        this.kilometrosActuales +=  distancia.redondear()}
-                    Premios.RESTAR5 -> {
-                        distanciaRestante = 0.0f
-                        this.combustibleActual -= (distancia / KM_L_HIBRIDO_MENOS5).redondear()
-                        this.kilometrosActuales +=  distancia.redondear() }
-                    else -> {
-                        distanciaRestante = 0.0f
-                        this.combustibleActual -= (distancia / KM_L_HIBRIDO).redondear()
-                        this.kilometrosActuales +=  distancia.redondear()
-                    }
+                    Premios.SUMAR10 -> this.combustibleActual -= (distancia / KM_L_HIBRIDO_MAS10).redondear()
+                    Premios.RESTAR5 -> this.combustibleActual -= (distancia / KM_L_HIBRIDO_MENOS5).redondear()
+                    else -> this.combustibleActual -= (distancia / KM_L_HIBRIDO).redondear()
                 }
             }
             return distanciaRestante.redondear()
